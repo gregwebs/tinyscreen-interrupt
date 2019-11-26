@@ -20,9 +20,6 @@ RTCZero rtc;
 // Change this to change how long the screen stays on
 int keepScreenOnForSeconds = 1;
 
-// Extend this code by setting the buttonCallback
-voidFuncPtr buttonCallback;
-
 unsigned long interruptTime = 0;
 unsigned long millisOffsetCount = 0;
 
@@ -44,12 +41,14 @@ void RTCwakeHandler() {
   sleepTime = 0;
 }
 
+void (*buttonCallbackPtr)(TinyScreen) = NULL;
+
 void buttonHandler() {
   msg("button press");
   debugDisplay("button");
   interruptTime = millisOffset();
-  if (buttonCallback != NULL) {
-    buttonCallback();
+  if (buttonCallbackPtr != NULL) {
+    (*buttonCallbackPtr)(display);
   } else {
     display.on();
   }
@@ -59,9 +58,10 @@ void msg(const String arg) {
   SerialMonitorInterface.println(arg);
 }
 
-
-void Screen_setup()
+void Screen_setup(void(*setButtonCallback)(TinyScreen))
 {
+  buttonCallbackPtr = setButtonCallback;
+
   for (int i = 0; i < 27; i++) {
     if ((i != PIN_USB_DM) && (i != PIN_USB_DP)) {
       pinMode(i, INPUT_PULLUP);

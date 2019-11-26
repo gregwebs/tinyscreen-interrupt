@@ -8,15 +8,14 @@ The Justfile has compilation, etc commands using the arduino-cli
 
 # Extending the code
 
-Set these two variables
+Set this variable
 * keepScreenOnForSeconds
-* buttonCallback
 
-You can use buttonCallback to implement your program.
-Your buttonCallback is responsible for calling display.on()
+Change the function onButtonPress to implement your program.
 
 
 # Sleep side effects
+
 You need to wake up the processor (press buttons) to be able to reflash it.
 Of course, you can always just use the reset switch.
 
