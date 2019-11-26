@@ -56,7 +56,7 @@ void msg(const String arg) {
 // Change this to change how long the screen stays on
 int keepScreenOnForSeconds = 1;
 
-void Screen_setup(int screenTimeout, void(*setButtonCallback)(TinyScreen, RTCZero))
+void Screen_setup(int screenTimeout, void(*setup_screen)(TinyScreen), void(*setButtonCallback)(TinyScreen, RTCZero))
 {
   keepScreenOnForSeconds = screenTimeout;
   buttonCallbackPtr = setButtonCallback;
@@ -68,6 +68,7 @@ void Screen_setup(int screenTimeout, void(*setButtonCallback)(TinyScreen, RTCZer
   }
 
   display.begin();
+  setup_screen(display);
 
   rtc.begin();
   rtc.attachInterrupt(RTCwakeHandler);
