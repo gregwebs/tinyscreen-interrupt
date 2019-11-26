@@ -7,8 +7,6 @@
 //  Written by Ben Rose, TinyCircuits http://TinyCircuits.com
 //
 //-------------------------------------------------------------------------------
-#define DEBUG 1
-
 #include <SPI.h>
 #include <TinyScreen.h>
 TinyScreen display = TinyScreen(TinyScreenPlus);
@@ -16,9 +14,6 @@ TinyScreen display = TinyScreen(TinyScreenPlus);
 #define SerialMonitorInterface SerialUSB
 #include <RTCZero.h>
 RTCZero rtc;
-
-// Change this to change how long the screen stays on
-int keepScreenOnForSeconds = 1;
 
 unsigned long interruptTime = 0;
 unsigned long millisOffsetCount = 0;
@@ -41,14 +36,14 @@ void RTCwakeHandler() {
   sleepTime = 0;
 }
 
-void (*buttonCallbackPtr)(TinyScreen) = NULL;
+void (*buttonCallbackPtr)(TinyScreen, RTCZero) = NULL;
 
 void buttonHandler() {
   msg("button press");
   debugDisplay("button");
   interruptTime = millisOffset();
   if (buttonCallbackPtr != NULL) {
-    (*buttonCallbackPtr)(display);
+    (*buttonCallbackPtr)(display, rtc);
   } else {
     display.on();
   }
@@ -58,8 +53,12 @@ void msg(const String arg) {
   SerialMonitorInterface.println(arg);
 }
 
-void Screen_setup(void(*setButtonCallback)(TinyScreen))
+// Change this to change how long the screen stays on
+int keepScreenOnForSeconds = 1;
+
+void Screen_setup(int screenTimeout, void(*setButtonCallback)(TinyScreen, RTCZero))
 {
+  keepScreenOnForSeconds = screenTimeout;
   buttonCallbackPtr = setButtonCallback;
 
   for (int i = 0; i < 27; i++) {
@@ -91,7 +90,6 @@ void Screen_setup(void(*setButtonCallback)(TinyScreen))
 #endif
   debugDisplay("Setup");
   delay(1000);
-  display.on();
   interruptTime = millisOffset();
 }
 
@@ -117,8 +115,7 @@ void Screen_loop() {
 
 void debugDisplay(String msg) {
 #if defined(DEBUG)
-  display.clearScreen();
-  display.setCursor(10, 10);
+  display.setCursor(1, 50);
   display.setFont(thinPixel7_10ptFontInfo);
   display.print(msg);
 #else

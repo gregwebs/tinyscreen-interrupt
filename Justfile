@@ -2,6 +2,8 @@
 board := "TinyCircuits:samd:tinyzero"
 project := "."
 
+flash: compile upload
+
 compile:
 	@mkdir -p bin
 	arduino-cli compile --fqbn {{board}} {{project}} -o bin/bin.TinyCircuits.samd.tinyzero.bin
