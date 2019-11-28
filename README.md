@@ -8,6 +8,7 @@ Go to sleep and wake up when buttons are pressed.
 
 The example interrupt implementation is in [tinyscreen-interrupt-lib.ino](./tinyscreen-interrupt-lib.ino) for your reference.
 To write your program you can change just the file [tinyscreen-interrupt.ino](./tinyscreen-interrupt.ino), in particular you can add to `onButtonPress`.
+Note that you are responsible for turning the diplay on and calling the sleep function.
 
 Configuration of the screen timeout is given as the first argument to the `Screen_setup` function.
 

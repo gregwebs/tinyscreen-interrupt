@@ -56,7 +56,7 @@ void msg(const String arg) {
 // Change this to change how long the screen stays on
 int keepScreenOnForSeconds = 1;
 
-void Screen_setup(int screenTimeout, void(*setup_screen)(TinyScreen), void(*setButtonCallback)(TinyScreen, RTCZero))
+TinyScreen Screen_setup(int screenTimeout, void(*setButtonCallback)(TinyScreen, RTCZero))
 {
   keepScreenOnForSeconds = screenTimeout;
   buttonCallbackPtr = setButtonCallback;
@@ -68,7 +68,6 @@ void Screen_setup(int screenTimeout, void(*setup_screen)(TinyScreen), void(*setB
   }
 
   display.begin();
-  setup_screen(display);
 
   rtc.begin();
   rtc.attachInterrupt(RTCwakeHandler);
@@ -90,8 +89,8 @@ void Screen_setup(int screenTimeout, void(*setup_screen)(TinyScreen), void(*setB
   while (GCLK->STATUS.bit.SYNCBUSY) {}
 #endif
   debugDisplay("Setup");
-  delay(1000);
   interruptTime = millisOffset();
+  return display;
 }
 
 void Screen_loop() {
@@ -109,13 +108,16 @@ void Screen_loop() {
   }
 
   sleepTime = rtc.getEpoch();
+}
+
+void Screen_sleep() {
   msg("display off");
   display.off();
   rtc.standbyMode();
 }
 
 void debugDisplay(String msg) {
-#if defined(DEBUG)
+#if DEBUG
   display.setCursor(1, 50);
   display.setFont(thinPixel7_10ptFontInfo);
   display.print(msg);

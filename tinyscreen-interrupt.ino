@@ -3,19 +3,25 @@
 
 #define DEBUG 1
 
+bool displayOn = false;
+
+void onButtonPress(TinyScreen display, RTCZero rtc) {
+    byte buttons = display.getButtons();
+    displayOn = true;
+    display.on();
+}
+
 void setup() {
-    Screen_setup(5, &setup_screen, &onButtonPress);
+  TinyScreen screen = Screen_setup(5, &onButtonPress);
+  setup_screen(screen);
+}
+
+void setup_screen(TinyScreen display) {
+  // display.setFlip(true);
 }
 
 void loop() {
     Screen_loop();
-}
-
-void onButtonPress(TinyScreen display, RTCZero rtc) {
-    byte buttons = display.getButtons();
-    display.on();
-}
-
-void setup_screen(TinyScreen display) {
-	// display.setFlip(true);
+    displayOn = false;
+    Screen_sleep();
 }
